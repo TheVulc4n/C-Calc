@@ -77,6 +77,31 @@ char remove_char(str_t* s){
 	return c;
 }
 
+int remove_specific_char(str_t* s, char c){
+	/*
+	1. Find the char or null
+		a) if null return -1
+	2. remove the char
+		a) copy everything in the string after the char to 1 spot behind it
+	3. return 1
+	*/
+	int i = 0;
+	while(i < s->cap){
+		if(s->str[i] == '\0'){
+			return -1;
+		}else if(s->str[i] == c){
+			for(int j = i; (j+1) < s->cap && s->str[j]!= '\0'; j++){
+				s->str[j] = s->str[j+1];
+			}
+			return i;
+		}
+		i++;
+	}
+	//this string is broken. No null character in end.
+	fprintf(stderr, "string broken. Crashing to avoid any further problems.");
+	exit(-1);
+}
+
 str_t concatinate_string(str_t lhs, str_t rhs){
 	int i;
 	for(i = 0; i < lhs.cap && lhs.str[i] != '\0'; i++);
