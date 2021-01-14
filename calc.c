@@ -77,29 +77,44 @@ char remove_char(str_t* s){
 	return c;
 }
 
-int remove_specific_char(str_t* s, char c){
+int remove_specific_char(str_t* s, char c, int startpos){
 	/*
-	1. Find the char or null
-		a) if null return -1
-	2. remove the char
-		a) copy everything in the string after the char to 1 spot behind it
-	3. return 1
+	1. Find first instance of char c
+	
+	2. replace char c with ''
+	
+	3. replace this spot with the next spot and so on
+	
+	4. if char c not in string, return string as it is
+	
+	5. if no null found, crash and return -1
 	*/
-	int i = 0;
-	while(i < s->cap){
-		if(s->str[i] == '\0'){
-			return -1;
-		}else if(s->str[i] == c){
-			for(int j = i; (j+1) < s->cap && s->str[j]!= '\0'; j++){
-				s->str[j] = s->str[j+1];
-			}
-			return i;
-		}
+	
+	int i = startpos;
+	
+	while(i < s->cap && s->str[i] != c && s->str[i] != '\0'){
 		i++;
 	}
-	//this string is broken. No null character in end.
-	fprintf(stderr, "string broken. Crashing to avoid any further problems.");
-	exit(-1);
+	if(i >= s->cap){
+		exit(-1);
+	}else if(s->str[i] == c){
+		for(int j = i; (j+1) < s->cap && s->str[j] != '\0'; j++){
+			s->str[j] = s->str[j+1];
+		}
+		return i;
+	}else{
+		return -1;
+	}
+}
+
+int remove_all(str_t *s, char c){
+	int total = -1;
+	int pos = 0;
+	while(pos >= 0){
+		pos = remove_specific_char(s, c, pos);
+		total++;
+	}
+	return total;
 }
 
 str_t concatinate_string(str_t lhs, str_t rhs){
@@ -219,26 +234,16 @@ void main() {
 	float arr3[] = {1.2,2.3,3.4,4.5,5.6,6.7};
 	print_pair_wise(3,arr1,arr2,arr3);
 	*/
-	str_t string = new_str(17);
-	str_t string2 = new_str(7);
+	str_t string = new_str(6);
 	
 	add_char(&string, 'a');
 	add_char(&string, 'b');
 	add_char(&string, 'c');
-	add_char(&string, 'd');
+	add_char(&string, 'b');
 	add_char(&string, 'e');
 	add_char(&string, 'f');
-	
-	add_char(&string2, 'g');
-	add_char(&string2, 'h');
-	add_char(&string2, 'i');
-	add_char(&string2, 'j');
-	add_char(&string2, 'k');
-	add_char(&string2, 'l');
-	str_t string3 = concatinate_string(string, string2);
-	print_str(string3);
-	printf("\nString cap: %d\nString2 cap: %d\nString3 cap: %d\n", string.cap, string2.cap, string3.cap);
-	printf("%d\n",pattern_solver_1(5));
+	printf("I removed %d characters\n",remove_all(&string, 'q'));
+	print_str(string);
 }
 
 
